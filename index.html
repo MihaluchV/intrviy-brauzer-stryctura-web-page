@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Інтерв'ю з браузером</title>
+<meta name="description" content="Інтерактивний тренажер з HTML для 11 класу: структура сторінки та текстові теги">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f7fb;--card:#fff;--tx:#1d2330;--mu:#5f6879;--ac:#3b5bdb;--ok:#2b8a3e;--okb:#e6f6ea;--no:#c92a2a;--nob:#fdeaea;--bd:#dde1ea;--code:#161b2e;--codetx:#e6e9f5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151d;--card:#1b2030;--tx:#e8ebf4;--mu:#9aa3b8;--ac:#8fa6ff;--ok:#69db7c;--okb:#173323;--no:#ff8787;--nob:#3a1b1d;--bd:#2d3448;--code:#0c0f18}}
+:root[data-theme="dark"]{--bg:#12151d;--card:#1b2030;--tx:#e8ebf4;--mu:#9aa3b8;--ac:#8fa6ff;--ok:#69db7c;--okb:#173323;--no:#ff8787;--nob:#3a1b1d;--bd:#2d3448;--code:#0c0f18}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:1.6rem;margin:.2em 0}h2{font-size:1.2rem;margin:0 0 .5em}
+.mu{color:var(--mu)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin:14px 0}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;width:0;background:var(--ac);transition:width .3s}
+.code{background:var(--code);color:var(--codetx);border-radius:10px;padding:8px 0;font:14px/1.6 ui-monospace,Menlo,Consolas,monospace;overflow-x:auto}
+.ln{display:flex;gap:10px;padding:1px 12px;white-space:pre;cursor:default;border-left:3px solid transparent}
+.ln.q{cursor:pointer}.ln.q:hover{background:rgba(255,255,255,.07)}
+.ln.sel{background:rgba(143,166,255,.22);border-left-color:#8fa6ff}
+.ln.done{border-left-color:#69db7c}
+.ln b{color:#7c859f;font-weight:400;min-width:1.6em;text-align:right}
+.ln.q b::after{content:" ?";color:#ffd43b}.ln.done b::after{content:" ✓";color:#69db7c}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--ac)}
+.opt.ok{background:var(--okb);border-color:var(--ok)}.opt.no{background:var(--nob);border-color:var(--no)}
+.opt:disabled{cursor:default}
+.fb{margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--okb)}
+.fb.bad{background:var(--nob)}
+.say{font-style:italic}
+.tag{display:inline-block;font:13px ui-monospace,Menlo,Consolas,monospace;background:var(--bd);padding:1px 6px;border-radius:6px}
+textarea{width:100%;min-height:240px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;background:var(--code);color:var(--codetx);border:1px solid var(--bd);border-radius:10px;padding:10px;resize:vertical}
+iframe{width:100%;height:240px;border:1px solid var(--bd);border-radius:10px;background:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:700px){.grid{grid-template-columns:1fr}}
+.chk{list-style:none;padding:0;margin:0}.chk li{padding:4px 0}.chk li::before{content:"○ ";color:var(--mu)}
+.chk li.y::before{content:"✔ ";color:var(--ok)}.chk li.y{color:var(--ok)}
+button.go{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:inherit;cursor:pointer}
+:root[data-theme="dark"] button.go,:root:not([data-theme="light"]) button.go{color:#12151d}
+.part{display:none}.part.on{display:block}
+.steps{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.steps span{padding:3px 12px;border-radius:999px;background:var(--bd);color:var(--mu);font-size:.85rem}
+.steps span.on{background:var(--ac);color:#fff}.steps span.past{color:var(--ok)}
+:root[data-theme="dark"] .steps span.on,:root:not([data-theme="light"]) .steps span.on{color:#12151d}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+button.ghost{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+:root[data-theme="dark"] button.go.ghost,:root:not([data-theme="light"]) button.go.ghost{color:var(--tx)}
+.slot{display:flex;align-items:center;gap:10px;padding:3px 12px}
+.slot b{color:#7c859f;font-weight:400;min-width:1.6em;text-align:right}
+.slot .drop{flex:1;min-width:0;min-height:32px;margin-left:calc(var(--lv)*22px);border:1.5px dashed #4a5272;border-radius:8px;display:flex;align-items:center;padding:2px 6px;color:#6b7596;font-size:12px;overflow:hidden}
+.slot.ok .drop{border:1.5px solid #69db7c}.slot.bad .drop{border:1.5px solid #ff8787}
+.slot.over .drop{background:rgba(143,166,255,.25)}
+.chip{font:14px ui-monospace,Menlo,Consolas,monospace;background:#2b3358;color:#e6e9f5;border:1px solid #5a6492;border-radius:8px;padding:4px 10px;white-space:normal;overflow-wrap:anywhere;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;max-width:100%}
+.chip.sel{outline:2px solid #ffd43b}
+.ghost-chip{position:fixed;pointer-events:none;z-index:99;opacity:.92}
+.trayw{position:sticky;bottom:0;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));margin-top:12px}
+.tray{display:flex;flex-wrap:wrap;gap:8px;overflow-y:auto;overflow-x:hidden;max-height:38vh;padding:4px 0;min-height:42px}
+table.sm{width:100%;border-collapse:collapse;margin:12px 0}table.sm th,table.sm td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--bd)}
+.big{font-size:1.5rem;font-weight:700}
+.acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+</style>
+</head>
+<body>
+<main>
+<h1>🎤 Інтерв'ю з браузером</h1>
+<p class="mu">Ти — журналіст. Сьогодні в тебе ексклюзив: браузер розповість, що відбувається «під капотом», коли він відкриває HTML-файл.</p>
+<div class="card"><b>Прогрес: <span id="score">0</span> з <span id="total">0</span></b><div class="bar"><i id="pb"></i></div><div id="steps" class="steps"></div></div>
+
+<section class="card part" id="p1">
+<h2>Частина 1. Інтерв'ю за кодом</h2>
+<p class="mu">Клікни на рядок із позначкою <span class="tag">?</span>, постав браузеру запитання й обери його справжню відповідь.</p>
+<div class="code" id="code"></div>
+<div id="qbox" class="card" style="margin-bottom:0;display:none"></div>
+<div class="nav"><span></span><button class="go" data-go="1">Далі →</button></div>
+</section>
+
+<section class="card part" id="p2">
+<h2>Частина 2. Експерименти «Що, якщо…»</h2>
+<p class="mu">Спрогнозуй, що зробить браузер, коли ти змінюватимеш код.</p>
+<div id="exp"></div>
+<div class="nav"><button class="go ghost" data-go="0">← Назад</button><button class="go" data-go="2">Далі →</button></div>
+</section>
+
+<section class="card part" id="p3">
+<h2>Частина 3. Збери структуру сторінки</h2>
+<p class="mu">Перетягни теги з нижньої панелі на потрібні рядки й збери каркас сторінки про Карпати. Відступи показують вкладеність. На телефоні можна торкнутися тега, а потім рядка. Торкнися тега в рядку, щоб повернути його на панель.</p>
+<div class="code" id="build"></div>
+<div class="trayw"><div class="mu" style="font-size:13px;margin-bottom:4px">Теги в довільному порядку:</div><div class="tray" id="tray"></div></div>
+<div class="acts"><button class="go" id="chkb">Перевірити</button><button class="go ghost" id="rstb">Скинути</button><span id="bmsg"></span></div>
+<div class="nav"><button class="go ghost" data-go="1">← Назад</button><button class="go" data-go="3">Підсумок</button></div>
+</section>
+
+<section class="card part" id="p4">
+<h2>Підсумок</h2>
+<div id="sum"></div>
+<div class="nav"><button class="go ghost" data-go="2">← Назад</button><span></span></div>
+</section>
+
+</main>
+<script>
+const CODE=[
+"<!DOCTYPE html>",'<html lang="uk">',"<head>",'  <meta charset="UTF-8">','  <meta name="viewport" content="width=device-width, initial-scale=1">',"  <title>Подорож до Карпат</title>","</head>","<body>","  <h1>Подорож до Карпат</h1>","  <p>Карпати — найвищі гори України.</p>","  <p>Найвища вершина — Говерла.      Висота: 2061 м.</p>","  <h2>Що взяти з собою</h2>","  <p>Перелік речей ще не готовий","</body>","</html>"];
+const Q=[
+{l:0,q:"Ти бачиш <!DOCTYPE html> першим рядком. Що ти робиш?",o:["«Вмикаю стандартний режим HTML5, а не режим сумісності зі старими правилами»","«Виводжу цей рядок великим заголовком»","«Завантажую зовнішню бібліотеку»"],w:"Без DOCTYPE браузер може перейти в режим сумісності."},
+{l:1,q:"Що означає тег html та атрибут lang=\"uk\"?",o:["«Починаю кореневий елемент; lang повідомляє, що вміст українською (важливо для перекладачів і читалок)»","«Перекладаю сторінку українською»","«Змінюю мову інтерфейсу браузера»"],w:"Усе, що всередині html, — це сторінка."},
+{l:2,q:"Що ти робиш із вмістом head? Показуєш його на екрані?",o:["«Читаю службову інформацію про сторінку, але у вікні її не показую»","«Показую угорі сторінки»","«Ігнорую, він не потрібен»"],w:"head — для браузера й пошукових систем."},
+{l:3,q:"Що станеться з українськими літерами, якщо цього рядка не буде?",o:["«Я можу не вгадати кодування, і кирилиця стане «кракозябрами»»","«Нічого, я завжди вгадую»","«Усі літери стануть великими»"],w:"meta charset задає кодування символів."},
+{l:4,q:"Що означає цей рядок і навіщо він потрібен на телефоні?",o:["«Беру ширину сторінки з ширини екрана пристрою й показую її в масштабі 100%»","«Збільшую шрифт до розміру заголовка»","«Блокую прокручування сторінки»"],w:"Без viewport телефон може показати сторінку як на широкому екрані й сильно зменшити її."},
+{l:5,q:"Куди ти «подіваєш» текст із title?",o:["«Виводжу у назві вкладки, закладках та історії, а не на самій сторінці»","«Виводжу найбільшим заголовком на сторінці»","«Нікуди, він невидимий»"],w:"title видно у вкладці, а не в тілі сторінки."},
+{l:7,q:"Чим body відрізняється від head?",o:["«Усе всередині body я показую у вікні користувачу»","«Нічим, це синоніми»","«У body лежать налаштування кодування»"],w:"Видимий вміст сторінки живе в body."},
+{l:8,q:"Як ти оформлюєш h1?",o:["«Малюю найбільшим жирним шрифтом із відступами: це заголовок найвищого рівня»","«Роблю курсивом»","«Ховаю, бо заголовок не потрібен»"],w:"h1–h6 — це ієрархія: h1 найважливіший."},
+{l:9,q:"Що ти робиш із тегом p?",o:["«Починаю абзац з нового рядка й додаю відступи зверху та знизу»","«Роблю текст жирним»","«Малюю лінію під текстом»"],w:"p — абзац: блоковий елемент із вертикальними відступами."},
+{l:10,q:"У коді між словами кілька пробілів і переносів рядка. Що ти з ними робиш?",o:["«Склеюю будь-яку кількість пробілів і переносів в один пробіл»","«Показую всі пробіли й переноси як є»","«Кожен перенос рядка перетворюю на новий абзац»"],w:"Щоб відступити чи розділити текст у HTML, потрібні теги, а не пробіли."},
+{l:11,q:"Чим h2 відрізняється від h1?",o:["«h2 — заголовок розділу, менший за h1; обираю рівень за змістом, а не за розміром»","«h2 розміром більший за h1»","«Нічим, це той самий тег»"],w:"Рівень заголовка визначає структура тексту."},
+{l:12,q:"Остання p без </p>: що ти робиш?",o:["«Сам домислю закриття й нічого не скажу, але це поганий стиль»","«Показую червоне попередження на сторінці»","«Не показую весь вміст»"],w:"Браузер толерантний до помилок, тож вони можуть лишитись непоміченими."}
+];
+const EXP=[
+{q:"Видалили <meta charset=\"UTF-8\">. Що може статись?",o:["Кирилиця відобразиться «кракозябрами»","Зникнуть усі заголовки","Нічого й ніколи"],c:0,w:"Кодування — це «ключ» для читання літер."},
+{q:"Перенесли <title> всередину <body>. Що зробить браузер?",o:["Покаже помилку й нічого не відобразить","Зазвичай усе одно використає його для вкладки, але структура порушена","Виведе title як h1"],c:1,w:"Браузер «лікує» помилку, але документ уже невалідний."},
+{q:"Замінили <h1> на <h6>. Що зміниться?",o:["Текст стане дрібнішим, а за змістом це вже заголовок нижчого рівня","Нічого, лише колір","Заголовок зникне"],c:0,w:"Заголовки обирають за змістом, а не за розміром."},
+{q:"Додали в абзац 10 пробілів між словами.",o:["З'явиться 10 пробілів","Браузер склеїть їх в один","Браузер видасть помилку"],c:1,w:"Послідовність пробілів і переносів рядка в коді зливається в один пробіл."},
+{q:"Написали абзац усередині абзацу: <p>Один <p>Два</p></p>.",o:["Вийде два окремі абзаци, а зайвий </p> дасть порожній абзац","Другий абзац вкладеться всередину першого з відступом","Помилка, текст не з'явиться"],c:0,w:"Абзац не можна вкладати в абзац: браузер сам закриє перший, і розмітка стане некоректною."},
+{q:"Видалили <!DOCTYPE html>.",o:["Нічого не змінилось у принципі","Браузер перейде в режим сумісності, і сторінка може поводитись інакше","Сторінка не відкриється"],c:1,w:"Режим сумісності залишився для старих сайтів."}
+];
+const stats={e1:0,e2:0,e3:0,back:0,tries:0};let done=new Set(),total=Q.length+EXP.length+14;
+const $=s=>document.querySelector(s);
+$("#total").textContent=total;
+function upd(extra){const n=done.size+(extra||0);$("#score").textContent=n;$("#pb").style.width=(n/(total)*100)+"%"}
+const shuf=a=>a.map((v,i)=>[v,i]).sort(()=>Math.random()-.5);
+
+// Part 1
+const code=$("#code");
+CODE.forEach((t,i)=>{const q=Q.findIndex(x=>x.l===i);const d=document.createElement("div");d.className="ln"+(q>-1?" q":"");d.dataset.q=q;
+const b=document.createElement("b");b.textContent=i+1;const s=document.createElement("span");s.textContent=t;d.append(b,s);
+if(q>-1)d.onclick=()=>openQ(q);code.append(d)});
+function openQ(q){
+ document.querySelectorAll(".ln").forEach(e=>e.classList.remove("sel"));
+ const row=code.children[Q[q].l];row.classList.add("sel");
+ const box=$("#qbox");box.style.display="block";box.innerHTML="";
+ const p=document.createElement("p");p.innerHTML='<b>🎙 Журналіст:</b> <span class="say"></span>';p.querySelector("span").textContent=Q[q].q;box.append(p);
+ shuf(Q[q].o).forEach(([txt,orig])=>{const b=document.createElement("button");b.className="opt";b.textContent=txt;
+  b.onclick=()=>{const ok=orig===0;
+   box.querySelectorAll(".opt").forEach(x=>x.disabled=true);
+   b.classList.add(ok?"ok":"no");
+   if(!ok)[...box.querySelectorAll(".opt")].find(x=>x.textContent===Q[q].o[0]).classList.add("ok");
+   const f=document.createElement("div");f.className="fb"+(ok?"":" bad");f.textContent=(ok?"✔ Вірно! ":"✘ Ні, браузер відповів би інакше. ")+Q[q].w;box.append(f);
+   if(ok){done.add("a"+q);row.classList.add("done");upd()}
+   else{stats.e1++;const r=document.createElement("button");r.className="go";r.textContent="Спробувати ще раз";r.style.marginTop="8px";r.onclick=()=>openQ(q);box.append(r)}
+  };box.append(b)});
+ box.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+// Part 2
+EXP.forEach((e,qi)=>{const w=document.createElement("div");w.style.margin="12px 0";
+ const p=document.createElement("p");p.innerHTML="<b>"+"АБВГДЕ"[qi]+".</b> ";p.append(e.q);w.append(p);
+ const fb=document.createElement("div");
+ shuf(e.o).forEach(([txt,orig])=>{const b=document.createElement("button");b.className="opt";b.textContent=txt;
+  b.onclick=()=>{const ok=orig===e.c;
+   if(ok){w.querySelectorAll(".opt").forEach(x=>x.disabled=true);b.classList.add("ok");done.add("e"+qi);upd()}
+   else{b.classList.add("no");stats.e2++}
+   fb.className="fb"+(ok?"":" bad");fb.textContent=(ok?"✔ Так! ":"✘ Спробуй ще. ")+(ok?e.w:"")};
+  w.append(b)});w.append(fb);$("#exp").append(w)});
+
+
+// Navigation
+const PARTS=[...document.querySelectorAll(".part")],NAMES=["1 Інтерв'ю","2 Експерименти","3 Збери сторінку","4 Підсумок"];
+let cur=0;
+function goto(n){cur=n;PARTS.forEach((p,i)=>p.classList.toggle("on",i===n));
+ const st=$("#steps");st.innerHTML="";NAMES.forEach((t,i)=>{const e=document.createElement("span");e.textContent=t;e.className=i===n?"on":i<n?"past":"";st.append(e)});
+ if(n===3)renderSummary();window.scrollTo({top:0,behavior:"smooth"})}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){const t=+b.dataset.go;if(t<cur)stats.back++;goto(t)}});
+
+// Part 3: drag & drop
+const TAGS=[["<!DOCTYPE html>",0],['<html lang="uk">',0],["<head>",1],['<meta charset="UTF-8">',2],['<meta name="viewport" content="width=device-width, initial-scale=1">',2],["<title>Подорож до Карпат</title>",2],["</head>",1],["<body>",1],["<h1>Подорож до Карпат</h1>",2],["<p>Карпати — найвищі гори України.</p>",2],["<h2>Що взяти з собою</h2>",2],["<p>Перелік речей ще не готовий.</p>",2],["</body>",1],["</html>",0]];
+let placed,order,sel=null,drag=null;
+function reset(){placed=TAGS.map(()=>null);order=TAGS.map((_,i)=>i).sort(()=>Math.random()-.5);sel=null;$("#bmsg").textContent="";for(let i=0;i<TAGS.length;i++)done.delete("s"+i);upd();render()}
+function mkChip(id){const e=document.createElement("div");e.className="chip"+(sel===id?" sel":"");e.textContent=TAGS[id][0];
+ e.addEventListener("pointerdown",ev=>{ev.preventDefault();drag={id,x:ev.clientX,y:ev.clientY,moved:false,ghost:null,el:e};addEventListener("pointermove",mv);addEventListener("pointerup",up)});return e}
+function render(){
+ const b=$("#build");b.innerHTML="";
+ TAGS.forEach((t,i)=>{const r=document.createElement("div");r.className="slot";r.dataset.i=i;r.style.setProperty("--lv",t[1]);
+  r.innerHTML="<b>"+(i+1)+"</b>";const d=document.createElement("div");d.className="drop";
+  if(placed[i]!==null)d.append(mkChip(placed[i]));else d.textContent="перетягни тег сюди";
+  d.addEventListener("click",e=>{if(sel!==null&&!e.target.closest(".chip"))put(sel,i)});
+  r.append(d);b.append(r)});
+ const tr=$("#tray");tr.innerHTML="";order.filter(id=>!placed.includes(id)).forEach(id=>tr.append(mkChip(id)));
+ if(!tr.children.length)tr.innerHTML='<span class="mu">Усі теги розставлено — натисни «Перевірити»</span>';
+}
+function put(id,i){const o=placed.indexOf(id);if(o>-1)placed[o]=null;placed[i]=id;sel=null;$("#bmsg").textContent="";render()}
+function unput(id){const o=placed.indexOf(id);if(o>-1)placed[o]=null;sel=null;$("#bmsg").textContent="";render()}
+const slotAt=ev=>{const e=document.elementFromPoint(ev.clientX,ev.clientY);return e&&e.closest(".slot")};
+function mv(ev){if(!drag)return;
+ if(!drag.moved&&Math.hypot(ev.clientX-drag.x,ev.clientY-drag.y)>6){drag.moved=true;const g=drag.el.cloneNode(true);g.className="chip ghost-chip";document.body.append(g);drag.ghost=g;drag.el.style.opacity=.3}
+ if(drag.moved){drag.ghost.style.left=ev.clientX-20+"px";drag.ghost.style.top=ev.clientY-16+"px";
+  document.querySelectorAll(".slot.over").forEach(x=>x.classList.remove("over"));const s=slotAt(ev);if(s)s.classList.add("over")}}
+function up(ev){removeEventListener("pointermove",mv);removeEventListener("pointerup",up);if(!drag)return;const d=drag;drag=null;
+ if(d.moved){d.ghost.remove();const s=slotAt(ev);if(s)put(d.id,+s.dataset.i);else unput(d.id)}
+ else if(placed.includes(d.id))unput(d.id);
+ else{sel=sel===d.id?null:d.id;render()}}
+$("#rstb").onclick=reset;
+$("#chkb").onclick=()=>{stats.tries++;let ok=0,filled=0;
+ document.querySelectorAll(".slot").forEach(r=>{const i=+r.dataset.i,id=placed[i];r.classList.remove("ok","bad");
+  if(id===null){done.delete("s"+i);return}filled++;
+  const good=id===i||((i===3||i===4)&&(id===3||id===4));
+  r.classList.add(good?"ok":"bad");if(good){ok++;done.add("s"+i)}else{stats.e3++;done.delete("s"+i)}});
+ upd();
+ $("#bmsg").textContent=ok===TAGS.length?"🎉 Каркас зібрано правильно! Ти розумієш структуру HTML-сторінки.":"Правильно: "+ok+" з "+TAGS.length+(filled<TAGS.length?" (розстав усі теги)":". Підказка: head і body лежать усередині html, а title — усередині head.")};
+let sumCv=null;
+function drawSummary(name){
+ const K=2,W=900,y0=name?194:150,H=y0+486,c=document.createElement("canvas");c.width=W*K;c.height=H*K;
+ const x=c.getContext("2d");x.scale(K,K);
+ const F="system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif";
+ const cnt=p=>[...done].filter(k=>k[0]===p).length;
+ const a=cnt("a"),e=cnt("e"),s=cnt("s"),n=done.size,pc=Math.round(n/total*100),er=stats.e1+stats.e2+stats.e3;
+ const v=pc>=90?"Відмінно!":pc>=70?"Добре!":pc>=50?"Задовільно, є що повторити.":"Варто повторити матеріал і спробувати ще раз.";
+ const rr=(l,t,w,h,r,f)=>{x.beginPath();x.roundRect?x.roundRect(l,t,w,h,r):x.rect(l,t,w,h);x.fillStyle=f;x.fill()};
+ x.fillStyle="#f6f7fb";x.fillRect(0,0,W,H);
+ x.fillStyle="#3b5bdb";x.fillRect(0,0,W,110);
+ x.fillStyle="#fff";x.font="700 34px "+F;x.fillText("Інтерв'ю з браузером",40,56);
+ x.font="400 20px "+F;x.fillText("Підсумок · "+new Date().toLocaleDateString("uk-UA"),40,90);
+ let y=150;
+ if(name){x.fillStyle="#1d2330";x.font="600 24px "+F;x.fillText(name,40,y);y+=44}
+ x.fillStyle="#1d2330";x.font="700 56px "+F;const t=n+" з "+total,w=x.measureText(t).width;x.fillText(t,40,y+50);
+ x.fillStyle="#3b5bdb";x.font="700 30px "+F;x.fillText(pc+"%",40+w+20,y+50);
+ rr(40,y+70,820,16,8,"#dde1ea");if(n>0)rr(40,y+70,Math.max(16,820*n/total),16,8,"#3b5bdb");
+ x.fillStyle="#1d2330";x.font="600 24px "+F;x.fillText(v,40,y+125);
+ const ty=y+150;rr(40,ty,820,230,14,"#ffffff");
+ const cols=[64,540,720];
+ x.fillStyle="#5f6879";x.font="600 18px "+F;["Частина","Правильно","Помилок"].forEach((h,i)=>x.fillText(h,cols[i],ty+38));
+ const rows=[["1. Інтерв'ю за кодом",a+" з "+Q.length,stats.e1],["2. Експерименти",e+" з "+EXP.length,stats.e2],["3. Структура сторінки",s+" з "+TAGS.length,stats.e3],["Усього помилок","",er]];
+ rows.forEach((r,i)=>{const yy=ty+38+(i+1)*44;x.fillStyle="#dde1ea";x.fillRect(56,yy-30,788,1);
+  const last=i===3;x.fillStyle=last?"#c92a2a":"#1d2330";x.font=(last?"700":"400")+" 22px "+F;
+  x.fillText(r[0],cols[0],yy);x.fillText(r[1],cols[1],yy);x.fillText(String(r[2]),cols[2],yy)});
+ x.fillStyle="#1d2330";x.font="400 22px "+F;
+ x.fillText("Повернень назад: "+stats.back,40,ty+270);
+ x.fillText("Спроб перевірки в частині 3: "+stats.tries,40,ty+306);
+ return c}
+function renderSummary(){
+ const box=$("#sum");
+ if(!box.dataset.init){box.dataset.init="1";
+  box.innerHTML=`<label class="mu">Ім'я та прізвище (з'явиться на зображенні):<br><input id="nm" maxlength="40" style="margin-top:4px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font:inherit;width:100%;max-width:360px"></label><p><img id="simg" alt="Підсумок" style="width:100%;border-radius:12px;border:1px solid var(--bd)"></p><div class="acts"><button class="go" id="savb">Зберегти зображення</button><span id="smsg" class="mu"></span></div>`;
+  $("#nm").addEventListener("input",renderSummary);$("#savb").onclick=saveImg}
+ sumCv=drawSummary($("#nm").value.trim());$("#simg").src=sumCv.toDataURL("image/png")}
+async function saveImg(){
+ const m=$("#smsg");m.textContent="";
+ let dl=null;try{dl=window.claude?await window.claude.use("downloads"):null}catch(_){}
+ const blob=await new Promise(r=>sumCv.toBlob(r,"image/png"));
+ if(!dl){const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="pidsumok-interviu-z-brauzerom.png";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);m.textContent="Зображення завантажено. Якщо ні, утримуй його пальцем (або клікни правою кнопкою) й обери «Зберегти зображення».";return}
+ try{await dl.save({filename:"pidsumok-interviu-z-brauzerom.png",data:blob});m.textContent="Збережено."}
+ catch(err){m.textContent=err&&err.code==="declined"?"Збереження скасовано.":"Не вдалося зберегти зображення."}}
+reset();goto(0);
+</script>
+</body>
+</html>
